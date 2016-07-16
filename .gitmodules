@@ -1,0 +1,3 @@
+[submodule "conf/resources/random-repo"]
+	path = conf/resources/random-repo
+	url = git@github.com:tomlancaster/random-repo.git
