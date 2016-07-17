@@ -47,7 +47,7 @@
                     <td>
                         <ul>
                         @for(runway <- countryQuerier.getRunwaysForAirportIdent(airport("ident"))) {
-                            <li>surface: @runway("surface") lighted: @runway("lighted") closed: @runway("closed")</li>
+                            <li>ident: @runway("le_ident") surface: @runway("surface") lighted: @if(runway("lighted") == "1") { "Yes" } else { "No" } closed: @if(runway("closed") == "1") { "Yes" } else { "No" }</li>
                         }
                         </ul>
                     </td>

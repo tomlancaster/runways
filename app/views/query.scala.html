@@ -30,8 +30,8 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-    console.log('ready');
     var $input = $('#country-query');
+
     $input.typeahead(
         { "source" : function(query, process) {
                 $.get('/query/countries.json?q=' + query, {}, function(data) {
@@ -41,13 +41,14 @@ $(document).ready(function() {
            "items" : "all",
            "minLength" : 2,
            "displayText" : function(item) {
-                return item.name + "(" + item.code + ")";
+                return item.name + " (" + item.code + ")";
            },
            "afterSelect" : function(item) {
                 window.location.href = '/query/airports/' + item.code;
            }
         }
      );
+     $('#country-query').focus();
 });
 </script>
 
