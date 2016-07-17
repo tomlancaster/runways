@@ -1,0 +1,64 @@
+@import services.CountryQuerier
+@(message:String,countryCode:String, airports:List[Map[String,String]],countryQuerier:CountryQuerier,limit:Int,offset:Int,totalCount:Int)
+
+
+@main(message) {
+
+<div class="row">
+    <div class="col-md-12 table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Airport Name</th>
+                <th>Airport Code</th>
+                <th>Airport Type</th>
+                <th>Runways</th>
+            </tr>
+            </thead>
+            <tfoot>
+            <tr colspan="4">
+                <nav>
+                    <ul class="pagination">
+                        @if(totalCount > airports.size) {
+                            <li>
+                                <a href="/query/airports/@countryCode?limit=@limit&offset=@(offset-limit)" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            @for(i <- 0.until(totalCount).by(limit)) {
+                                <li @if(i == offset) { class="active" }><a href="/query/airports/@countryCode?limit=@limit&offset=@i">@i</a></li>
+                            }
+                            <li>
+                                <a href="/query/airports/@countryCode?limit=@limit&offset=@(offset+limit)" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </tr>
+            </tfoot>
+        <tbody>
+            @for(airport <- airports) {
+                <tr>
+                    <td>@airport("name")</td>
+                    <td>@airport("ident")</td>
+                    <td>@airport("type")</td>
+                    <td>
+                        <ul>
+                        @for(runway <- countryQuerier.getRunwaysForAirportIdent(airport("ident"))) {
+                            <li>surface: @runway("surface") lighted: @runway("lighted") closed: @runway("closed")</li>
+                        }
+                        </ul>
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+
+        </table>
+    </div>
+</div>
+
+}

@@ -1,0 +1,54 @@
+@*
+* This template takes a single argument, a String containing a
+* message to display.
+*@
+@(message: String)
+
+@*
+* Call the `main` template with two arguments. The first
+* argument is a `String` with the title of the page, the second
+* argument is an `Html` object containing the body of the page.
+*@
+@main(message) {
+
+@*
+* Get an `Html` object by calling the built-in Play welcome
+* template and passing a `String` message.
+*@
+
+
+<div class="row">
+    <div class="col-md-12">
+        <form>
+            <div class="form-group">
+                <label for="country-query">@message</label>
+                <input autocomplete="off" type="text" class="form-control typeahead" id="country-query" placeholder="type some letters of a country" data-provide="typeahead">
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    console.log('ready');
+    var $input = $('#country-query');
+    $input.typeahead(
+        { "source" : function(query, process) {
+                $.get('/query/countries.json?q=' + query, {}, function(data) {
+                    process(data);
+                    }, 'json');
+           },
+           "items" : "all",
+           "minLength" : 2,
+           "displayText" : function(item) {
+                return item.name + "(" + item.code + ")";
+           },
+           "afterSelect" : function(item) {
+                window.location.href = '/query/airports/' + item.code;
+           }
+        }
+     );
+});
+</script>
+
+}
