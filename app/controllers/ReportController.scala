@@ -14,7 +14,9 @@ import services.CountryQuerier
 class ReportController @Inject() (countryQuerier: CountryQuerier) extends Controller {
 
   def index = Action {
-    Ok(views.html.report("Behold! Your Report!"))
+    val topTen = countryQuerier.getTopTenReport
+    val bottomTen = countryQuerier.getBottomTenReport
+    Ok(views.html.report("Behold! Your Report!", topTen, bottomTen))
   }
 
 }

@@ -29,6 +29,10 @@ class CountryQuerier @Inject() (environment: Environment) {
     (countryAirports.drop(offset).take(limit),countryAirports.size)
   }
 
+  def getAirportsForCountryCode(countryCode: String: List[Map[String,String]] = {
+    val countryAirports = airports.filter(_("iso_country") == countryCode)
+  }
+
   def getCountryDataForString(s: String): List[Map[String,String]] = {
     val codeMatches = countries.filter { cMap =>
         cMap("code").toLowerCase().contains(s.toLowerCase())
@@ -40,6 +44,23 @@ class CountryQuerier @Inject() (environment: Environment) {
         cMap("name").toLowerCase().contains(s.toLowerCase())
       }
     }
+  }
+
+  def getTopTenReport: List[(String,Int)] = {
+    getCountriesWithAirportCounts.take(10)
+  }
+
+  def getBottomTenReport: List[(String,Int)] = {
+    getCountriesWithAirportCounts.reverse.take(10).reverse
+  }
+
+  def getRunwayTypesPerCountry(countryCode:String): List[(String,Int)] = {
+    getAirportsForCountryCode(countryCode).map { ap =>
+      getRunwaysForAirportIdent(ap("airport_ident")).groupBy(_("surface")).mapValues(_.size).toList.sortBy(_._2).reverse
+  }
+
+  def getCountriesWithAirportCounts:List[(String,Int)] = {
+    airports.groupBy(_("iso_country")).mapValues(_.size).toList.sortBy(_._2).reverse
   }
 
 

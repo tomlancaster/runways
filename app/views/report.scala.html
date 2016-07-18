@@ -1,1 +1,55 @@
-@(message:String)
+@import services.CountryQuerier
+@(message:String, topTen:List[(String,Int)], bottomTen:List[(String,Int)])
+
+
+
+@main(message) {
+
+<div class="row">
+    <div class="col-md-12 table-responsive">
+
+        <table class="table table-striped">
+            <legend>Top 10 Countries by Number of Airports</legend>
+            <thead>
+            <tr>
+                <th>Country Name</th>
+                <th>Number of Airports</th>
+               <!-- <th>Available Types of Runway</th>
+                <th>10 Most Common Runway Identifications</th> -->
+            </tr>
+            </thead>
+            <tbody>
+            @for(country <- topTen) {
+                <tr>
+                    <th>@country._1</th>
+                    <td>@country._2</td>
+
+                </tr>
+            }
+            </tbody>
+        </table>
+
+        <table class="table table-striped">
+            <legend>Bottom 10 Countries by Number of Airports</legend>
+            <thead>
+            <tr>
+                <th>Country Name</th>
+                <th>Number of Airports</th>
+              <!--  <th>Available Types of Runway</th>
+                <th>10 Most Common Runway Identifications</th> -->
+            </tr>
+            </thead>
+            <tbody>
+            @for(country <- bottomTen) {
+            <tr>
+                <th>@country._1</th>
+                <td>@country._2</td>
+
+            </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+}
