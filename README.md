@@ -1,4 +1,4 @@
-# Lunatech Coding Challenge - Airports and Runways
+# Airports and Runways
 
 This is a toy application intended to meet the following spec:
 

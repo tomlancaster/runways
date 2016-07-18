@@ -1,5 +1,5 @@
 @import services.CountryQuerier
-@(message:String, topTen:List[(String,Int)], bottomTen:List[(String,Int)])
+@(message:String, topTen:List[(String,Int)], bottomTen:List[(String,Int)], countryQuerier:CountryQuerier)
 
 
 
@@ -14,8 +14,8 @@
             <tr>
                 <th>Country Name</th>
                 <th>Number of Airports</th>
-               <!-- <th>Available Types of Runway</th>
-                <th>10 Most Common Runway Identifications</th> -->
+                <th>Available Types of Runway</th>
+                <th>10 Most Common Runway Identifications</th>
             </tr>
             </thead>
             <tbody>
@@ -23,7 +23,8 @@
                 <tr>
                     <th>@country._1</th>
                     <td>@country._2</td>
-
+                    <td>@countryQuerier.getRunwayTypesPerCountry(country._1)</td>
+                    <td>&nbsp;</td>
                 </tr>
             }
             </tbody>
@@ -35,8 +36,8 @@
             <tr>
                 <th>Country Name</th>
                 <th>Number of Airports</th>
-              <!--  <th>Available Types of Runway</th>
-                <th>10 Most Common Runway Identifications</th> -->
+                <th>Available Types of Runway</th>
+                <th>10 Most Common Runway Identifications</th>
             </tr>
             </thead>
             <tbody>
@@ -44,6 +45,8 @@
             <tr>
                 <th>@country._1</th>
                 <td>@country._2</td>
+                <td>@countryQuerier.getRunwayTypesPerCountry(country._1)</td>
+                <td>&nbsp;</td>
 
             </tr>
             }

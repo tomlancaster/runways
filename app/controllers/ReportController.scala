@@ -16,7 +16,7 @@ class ReportController @Inject() (countryQuerier: CountryQuerier) extends Contro
   def index = Action {
     val topTen = countryQuerier.getTopTenReport
     val bottomTen = countryQuerier.getBottomTenReport
-    Ok(views.html.report("Behold! Your Report!", topTen, bottomTen))
+    Ok(views.html.report("Behold! Your Report!", topTen, bottomTen, countryQuerier))
   }
 
 }
