@@ -1,6 +1,8 @@
-@import services.CountryQuerier
-@(message:String,countryCode:String, airports:List[Map[String,String]],countryQuerier:CountryQuerier,limit:Int,offset:Int,totalCount:Int)
-
+@import models.Airport
+@import models.Runway
+@import dao.RunwaysDAO
+@import scala.concurrent.ExecutionContext.Implicits.global
+@(message:String,countryCode:String, airports:Seq[Airport], rDao: RunwaysDAO, limit:Int,offset:Int,totalCount:Int)
 
 @main(message) {
 
@@ -41,14 +43,16 @@
         <tbody>
             @for(airport <- airports) {
                 <tr>
-                    <td>@airport("name")</td>
-                    <td>@airport("ident")</td>
-                    <td>@airport("type")</td>
+                    <td>@airport.name</td>
+                    <td>@airport.ident</td>
+                    <td>@airport.airport_type</td>
                     <td>
                         <ul>
-                        @for(runway <- countryQuerier.getRunwaysForAirportIdent(airport("ident"))) {
-                            <li>ident: @runway("le_ident") surface: @runway("surface") lighted: @if(runway("lighted") == "1") { "Yes" } else { "No" } closed: @if(runway("closed") == "1") { "Yes" } else { "No" }</li>
+                        @for(runwaysFuture <- rDao.getRunwaysForAirportIdent(airport.ident)) {
+                            @for(runway <- runwaysFuture) {
+                            <li>ident: @runway.le_ident surface: @runway.surface lighted: @if(runway.lighted) { "Yes" } else { "No" } closed: @if(runway.closed) { "Yes" } else { "No" }</li>
                         }
+                            }
                         </ul>
                     </td>
 

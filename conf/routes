@@ -13,8 +13,6 @@ GET     /query                      controllers.QueryController.index
 
 GET     /query/countries.json            controllers.QueryController.searchCountries
 
-GET     /query/airports/:id.json             controllers.QueryController.getAirportsForCountryCode(id)
-
 GET     /query/airports/:id         controllers.QueryController.airports(id)
 
 GET     /report                     controllers.ReportController.index
