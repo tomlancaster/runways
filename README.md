@@ -19,3 +19,5 @@ lowest number of airports.
 "le_ident" column)
 • Feel free to use any library/framework as necessary.
 ~~~~
+
+To Run: `bin/activator "~run"`
