@@ -4,9 +4,12 @@ package controllers
 import javax.inject._
 
 import dao.{AirportsDAO, CountriesDAO, RunwaysDAO}
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import models._
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
+
+import scala.concurrent.Await
+import scala.concurrent.duration._
 
 /**
   * Created by tom on 7/16/16.
@@ -18,24 +21,22 @@ class QueryController @Inject() (cDao: CountriesDAO, rDao: RunwaysDAO, aDao: Air
     Ok(views.html.query("Query Countries"))
   }
 
-  def airports(countryCode:String) = Action.async { request =>
+  def airports(countryCode:String) = Action { request =>
     val offset = Integer.parseInt(request.queryString.get("offset").flatMap(_.headOption).getOrElse("0"))
     val limit  = Integer.parseInt(request.queryString.get("limit").flatMap(_.headOption).getOrElse("50"))
-    val airportsReturn = aDao.airportsForCountryCode(countryCode, offset, limit)
-    airportsReturn.map { ap =>
-      val message = "List of Airports for " + countryCode + " (" + offset + " of " + ap._2 + ")"
-      Ok(views.html.airports(message,countryCode,ap._1, rDao, limit, offset, ap._2))
+    val (airports,totalCount) = aDao.airportsForCountryCode(countryCode, offset, limit)
+    val airportsWithRunways:Seq[(Airport,Seq[Runway])] = airports.map { ap =>
+      val runways = Await.result(rDao.getRunwaysForAirportIdent(ap.ident), 1 second)
+      (ap, runways)
     }
-
+    val message = "List of Airports for " + countryCode + " (" + offset + " of " + totalCount + ")"
+    Ok(views.html.airports(message,countryCode,airportsWithRunways, rDao, limit, offset, totalCount))
   }
 
-  def searchCountries = Action.async { request =>
-    import scala.concurrent.ExecutionContext.Implicits.global
+  def searchCountries = Action { request =>
     val query = request.queryString.get("q").flatMap(_.headOption).getOrElse("")
     val res = cDao.getCountryDataForString(query)
-    res.map { r =>
-      Ok(Json.toJson(r.map(_.json)) ) as JSON
-    }
+    Ok(Json.toJson(res.map(_.json)) ) as JSON
   }
 
 

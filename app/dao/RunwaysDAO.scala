@@ -1,13 +1,14 @@
 package dao
 
 import scala.concurrent.Future
-
 import javax.inject.Inject
+
 import models._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import slick.driver.SQLiteDriver
+
 
 class RunwaysDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[SQLiteDriver] {
   import driver.api._

@@ -1,18 +1,19 @@
 package dao
 
-import scala.concurrent.Future
-
 import javax.inject.Inject
+
 import models._
-import play.api.db.slick.DatabaseConfigProvider
-import play.api.db.slick.HasDatabaseConfigProvider
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import slick.driver.SQLiteDriver
+
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 class AirportsDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[SQLiteDriver] {
   import driver.api._
 
-  val Airports = TableQuery[AirportsTable]
+  def Airports = TableQuery[AirportsTable]
 
   def all(): Future[Seq[Airport]] = db.run(Airports.result)
 
@@ -20,15 +21,12 @@ class AirportsDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
 
   def airportsForCountryCode(code:String) = Airports.filter(_.iso_country === code)
 
-  private def airportsByCountryCodeQuery(code:String) = Airports.filter(_.iso_country === code)
+  def airportsByCountryCodeQuery(code:String) = Airports.filter(_.iso_country === code)
 
-  def airportsForCountryCode(code:String, offset:Int, limit: Int): Future[(Seq[Airport], Int)] =  {
-      val ap = db.run(airportsByCountryCodeQuery(code).drop(offset).take(limit).result)
-      val tc = db.run(airportsForCountryCode(code).length.result)
-      for {
-        a <- ap
-        c <- tc
-      } yield (a,c)
+  def airportsForCountryCode(code:String, offset:Int, limit: Int): (Seq[Airport], Int) =  {
+    val ap = Await.result(db.run(airportsByCountryCodeQuery(code).drop(offset).take(limit).result), 1 second)
+    val tc = Await.result(db.run(airportsForCountryCode(code).length.result), 1 second)
+    (ap,tc)
   }
 
   def insert(airport: Airport): Future[Unit] = db.run(Airports += airport).map { _ => () }

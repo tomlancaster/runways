@@ -28,7 +28,7 @@ class ReportController @Inject() (cDao: CountriesDAO) extends Controller {
       (bt._1, bt._2, bt._3,Await.result(cDao.getRunwayTypesPerCountry(bt._1), 1 minute))
     }
 
-    Ok(views.html.report("Behold! Your Report!", topTen, bottomTen, cDao))
+    Ok(views.html.report("Behold! Your Report!", topTen, bottomTen))
   }
 
 

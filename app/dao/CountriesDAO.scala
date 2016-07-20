@@ -7,7 +7,8 @@ import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import slick.driver.SQLiteDriver
 
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration._
 
 class CountriesDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[SQLiteDriver] {
   import driver.api._
@@ -30,12 +31,13 @@ class CountriesDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     db.run(Countries.filter {c => c.code.toLowerCase === code.toLowerCase()}.result)
   }
 
-  def getCountryDataForString(string:String): (Future[Seq[Country]]) = {
-    val cbc = getCountryByCode(string)
-    cbc.map { c =>
-      return (cbc)
+  def getCountryDataForString(string:String): Seq[Country] = {
+    val cbc = Await.result(getCountryByCode(string), 1 second)
+    if (cbc.length > 0) {
+      cbc
+    } else {
+      Await.result(db.run(Countries.filter { c => c.name.toLowerCase like string.toLowerCase }.result), 1 second)
     }
-    db.run(Countries.filter { c => c.name.toLowerCase like string.toLowerCase}.result)
   }
 
   def getTopTenAirportCountries: Future[Seq[(String,String,Int)]] = {

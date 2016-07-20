@@ -2,7 +2,7 @@
 @import models.Runway
 @import dao.RunwaysDAO
 @import scala.concurrent.ExecutionContext.Implicits.global
-@(message:String,countryCode:String, airports:Seq[Airport], rDao: RunwaysDAO, limit:Int,offset:Int,totalCount:Int)
+@(message:String,countryCode:String, airports:Seq[(Airport, Seq[Runway])], rDao: RunwaysDAO, limit:Int,offset:Int,totalCount:Int)
 
 @main(message) {
 
@@ -41,17 +41,15 @@
             </tr>
             </tfoot>
         <tbody>
-            @for(airport <- airports) {
+            @for((airport,runways) <- airports) {
                 <tr>
                     <td>@airport.name</td>
                     <td>@airport.ident</td>
                     <td>@airport.airport_type</td>
                     <td>
                         <ul>
-                        @for(runwaysFuture <- rDao.getRunwaysForAirportIdent(airport.ident)) {
-                            @for(runway <- runwaysFuture) {
+                            @for(runway <- runways) {
                             <li>ident: @runway.le_ident surface: @runway.surface lighted: @if(runway.lighted) { "Yes" } else { "No" } closed: @if(runway.closed) { "Yes" } else { "No" }</li>
-                        }
                             }
                         </ul>
                     </td>
