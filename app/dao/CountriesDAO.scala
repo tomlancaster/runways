@@ -54,6 +54,13 @@ class CountriesDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
       WHERE r.surface IS NOT NULL AND r.surface != '' AND a.iso_country = $code""".as[String])
   }
 
+  def getMostCommonRunwayIdents(countryCode:String, numNeeded:Int = 10) : Future[Seq[String]] =  {
+    db.run(sql"""SELECT r.le_ident, count(le_ident) as cnt
+      FROM runways r inner join airports a ON r.airport_ident = a.ident
+      WHERE a.iso_country = $countryCode
+      GROUP BY le_ident ORDER BY cnt DESC LIMIT $numNeeded""".as[String])
+  }
+
   private class CountriesTable(tag: Tag) extends Table[Country](tag, "countries") {
 
     def code = column[String]("code", O.PrimaryKey)

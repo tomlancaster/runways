@@ -1,4 +1,4 @@
-@(message:String, topTen:Seq[(String,String,Int,Seq[String])], bottomTen:Seq[(String,String,Int,Seq[String])])
+@(message:String, topTen:Seq[(String,String,Int,Seq[String], Seq[String])], bottomTen:Seq[(String,String,Int,Seq[String], Seq[String])])
 
 
 
@@ -23,7 +23,7 @@
                     <th>@country._2 (@country._1)</th>
                     <td>@country._3</td>
                     <td>@country._4.mkString(", ")</td>
-                    <td>&nbsp;</td>
+                    <td>@country._5.mkString(", ")</td>
                 </tr>
             }
             </tbody>
@@ -45,7 +45,7 @@
                 <th>@country._2 (@country._1)</th>
                 <td>@country._3</td>
                 <td>@country._4.mkString(", ")</td>
-                <td>&nbsp;</td>
+                <td>@country._5.mkString(", ")</td>
             </tr>
             }
             </tbody>
