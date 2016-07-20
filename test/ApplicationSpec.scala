@@ -24,19 +24,37 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
 
       status(home) mustBe OK
       contentType(home) mustBe Some("text/html")
-      contentAsString(home) must include ("Your new application is ready.")
+      contentAsString(home) must include ("Query and Report on Airports and Runways By Selecting an Option Above")
     }
 
   }
 
-  "CountController" should {
+  "QueryController" should {
+    "render the country query page" in {
+      val query = route(app, FakeRequest(GET, "/query")).get
 
-    "return an increasing count" in {
-      contentAsString(route(app, FakeRequest(GET, "/count")).get) mustBe "0"
-      contentAsString(route(app, FakeRequest(GET, "/count")).get) mustBe "1"
-      contentAsString(route(app, FakeRequest(GET, "/count")).get) mustBe "2"
+      status(query) mustBe OK
+      contentType(query) mustBe Some("text/html")
+      contentAsString(query) must include ("Query Countries")
     }
 
+    "render the US page" in {
+      val us = route(app, FakeRequest(GET, "/query/airports/US")).get
+
+      status(us) mustBe OK
+      contentType(us) mustBe Some("text/html")
+      contentAsString(us) must include ("Total Rf Heliport")
+    }
+  }
+
+  "ReportController" should {
+    "render the reports page" in {
+      val query = route(app, FakeRequest(GET, "/report")).get
+
+      status(query) mustBe OK
+      contentType(query) mustBe Some("text/html")
+      contentAsString(query) must include ("21501")
+    }
   }
 
 }
