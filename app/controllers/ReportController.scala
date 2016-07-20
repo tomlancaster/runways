@@ -9,12 +9,6 @@ import play.api.mvc._
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-
-class TupOps2[A, B](val x: (A, B)) extends AnyVal {
-  def :+[C](y: C) = (x._1, x._2, y)
-  def +:[C](y: C) = (y, x._1, x._2)
-}
-
 /**
   * Created by tom on 7/17/16.
   */

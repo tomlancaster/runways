@@ -13,11 +13,9 @@ import scala.concurrent.{Await, Future}
 class AirportsDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[SQLiteDriver] {
   import driver.api._
 
-  def Airports = TableQuery[AirportsTable]
+  val Airports = TableQuery[AirportsTable]
 
   def all(): Future[Seq[Airport]] = db.run(Airports.result)
-
-
 
   def airportsForCountryCode(code:String) = Airports.filter(_.iso_country === code)
 
@@ -32,7 +30,6 @@ class AirportsDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
   def insert(airport: Airport): Future[Unit] = db.run(Airports += airport).map { _ => () }
 
   class AirportsTable(tag: Tag) extends Table[Airport](tag, "airports") {
-
     def ident = column[String]("ident", O.PrimaryKey)
     def airport_type = column[String]("type")
     def name = column[String]("name")

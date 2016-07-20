@@ -17,8 +17,6 @@ class RunwaysDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
 
   def all(): Future[Seq[Runway]] = db.run(Runways.result)
 
-  def runwaysForAiportRef(ident:String) = Runways.filter(_.airport_ident === ident)
-
   def insert(runway: Runway): Future[Unit] = db.run(Runways += runway).map { _ => () }
 
   def getRunwaysForAirportIdent(ident:String):Future[Seq[Runway]] = {

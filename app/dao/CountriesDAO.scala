@@ -5,6 +5,7 @@ import javax.inject.Inject
 import models._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.Logger
 import slick.driver.SQLiteDriver
 
 import scala.concurrent.{Await, Future}
@@ -19,14 +20,6 @@ class CountriesDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   def insert(country: Country): Future[Unit] = db.run(Countries += country).map { _ => () }
 
-  def count(): Future[Int] = {
-    db.run(Countries.map(_.code).length.result)
-  }
-
-  def count(filter:String): Future[Int] = {
-    db.run(Countries.filter { c => c.name.toLowerCase like filter.toLowerCase }.length.result)
-  }
-
   def getCountryByCode(code:String): Future[Seq[Country]] = {
     db.run(Countries.filter {c => c.code.toLowerCase === code.toLowerCase()}.result)
   }
@@ -34,9 +27,12 @@ class CountriesDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   def getCountryDataForString(string:String): Seq[Country] = {
     val cbc = Await.result(getCountryByCode(string), 1 second)
     if (cbc.length > 0) {
+      Logger.debug("cbc: " + cbc)
       cbc
     } else {
-      Await.result(db.run(Countries.filter { c => c.name.toLowerCase like string.toLowerCase }.result), 1 second)
+      val q = Countries.filter { c => c.name.toLowerCase like "%" + string.toLowerCase + "%" }.result
+      val cbn = Await.result(db.run(q), 1 second)
+      cbn
     }
   }
 
