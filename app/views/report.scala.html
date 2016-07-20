@@ -1,5 +1,7 @@
-@import services.CountryQuerier
-@(message:String, topTen:List[(String,Int)], bottomTen:List[(String,Int)], countryQuerier:CountryQuerier)
+@import dao.CountriesDAO
+@import scala.concurrent.Future
+@import scala.concurrent.ExecutionContext.Implicits.global
+@(message:String, topTen:Seq[(String,String,Int,Seq[String])], bottomTen:Seq[(String,String,Int,Seq[String])], cDao: CountriesDAO)
 
 
 
@@ -21,9 +23,9 @@
             <tbody>
             @for(country <- topTen) {
                 <tr>
-                    <th>@country._1</th>
-                    <td>@country._2</td>
-                    <td>@countryQuerier.getRunwayTypesPerCountry(country._1)</td>
+                    <th>@country._2 (@country._1)</th>
+                    <td>@country._3</td>
+                    <td>@country._4.mkString(", ")</td>
                     <td>&nbsp;</td>
                 </tr>
             }
@@ -43,11 +45,10 @@
             <tbody>
             @for(country <- bottomTen) {
             <tr>
-                <th>@country._1</th>
-                <td>@country._2</td>
-                <td>@countryQuerier.getRunwayTypesPerCountry(country._1)</td>
+                <th>@country._2 (@country._1)</th>
+                <td>@country._3</td>
+                <td>@country._4.mkString(", ")</td>
                 <td>&nbsp;</td>
-
             </tr>
             }
             </tbody>

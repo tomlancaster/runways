@@ -33,7 +33,7 @@ class AirportsDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
 
   def insert(airport: Airport): Future[Unit] = db.run(Airports += airport).map { _ => () }
 
-  class AirportsTable(tag: Tag) extends Table[Airport](tag, "AIRPORT") {
+  class AirportsTable(tag: Tag) extends Table[Airport](tag, "airports") {
 
     def ident = column[String]("ident", O.PrimaryKey)
     def airport_type = column[String]("type")

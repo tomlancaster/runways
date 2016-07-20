@@ -24,7 +24,7 @@ class RunwaysDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
     db.run(Runways.filter(_.airport_ident === ident).result)
   }
 
-  class RunwaysTable(tag: Tag) extends Table[Runway](tag, "RUNWAY") {
+  class RunwaysTable(tag: Tag) extends Table[Runway](tag, "runways") {
 
     def airport_ident = column[String]("airport_ident", O.PrimaryKey)
     def surface = column[String]("surface")

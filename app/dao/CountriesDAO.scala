@@ -1,13 +1,13 @@
 package dao
 
-import scala.concurrent.Future
-
 import javax.inject.Inject
+
 import models._
-import play.api.db.slick.DatabaseConfigProvider
-import play.api.db.slick.HasDatabaseConfigProvider
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import slick.driver.SQLiteDriver
+
+import scala.concurrent.Future
 
 class CountriesDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[SQLiteDriver] {
   import driver.api._
@@ -38,7 +38,25 @@ class CountriesDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     db.run(Countries.filter { c => c.name.toLowerCase like string.toLowerCase}.result)
   }
 
-  private class CountriesTable(tag: Tag) extends Table[Country](tag, "COUNTRY") {
+  def getTopTenAirportCountries: Future[Seq[(String,String,Int)]] = {
+    db.run(sql"""select c.code, c.name, count(a.ident) as cnt
+      FROM countries c inner join airports a on c.code = a.iso_country
+      GROUP BY c.code ORDER BY cnt DESC LIMIT 10""".as[(String,String,Int)])
+  }
+
+  def getBottomTenAirportCountries: Future[Seq[(String,String,Int)]] = {
+    db.run(sql"""select c.code, c.name, count(a.ident) as cnt
+      FROM countries c inner join airports a on c.code = a.iso_country
+      GROUP BY c.code ORDER BY cnt ASC LIMIT 10""".as[(String,String,Int)])
+  }
+
+  def getRunwayTypesPerCountry(code:String): Future[Seq[String]] = {
+    db.run(sql"""SELECT DISTINCT(r.surface)
+      FROM runways r INNER JOIN airports a ON r.airport_ident = a.ident
+      WHERE r.surface IS NOT NULL AND r.surface != '' AND a.iso_country = $code""".as[String])
+  }
+
+  private class CountriesTable(tag: Tag) extends Table[Country](tag, "countries") {
 
     def code = column[String]("code", O.PrimaryKey)
     def name = column[String]("name")
